@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 import java.util.Optional;
 
 public class MenuController {
-    private Integer tilesPreset = 20;
-    private Integer minesPreset = 75;
+    static int tilesPreset = 20;
+    static int minesPreset = 75;
     private int area = tilesPreset * tilesPreset;
 
     @FXML
