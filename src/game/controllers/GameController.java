@@ -1,7 +1,6 @@
 package game.controllers;
 
 import java.util.*;
-
 import javafx.util.*;
 import game.Hexagon;
 import javafx.scene.*;
@@ -19,10 +18,10 @@ public class GameController {
     public static int openedCounter = 0;
     public static boolean won = false;
     public static boolean lost = false;
-    private static int tiles = 20;
+    static int tiles = MenuController.tilesPreset;
     private static int tilesFlagged;
     private static int area = tiles * tiles;
-    private static int mines = 75;
+    static int mines = MenuController.minesPreset;;
     private static int tilesSize = 20;
     private static int mineCounter = 0;
     private static HBox box = new HBox();
@@ -42,8 +41,9 @@ public class GameController {
     }
 
     static void game(Stage primaryStage) {
+        final double offset = tiles * tilesSize + tiles * 17;
         primaryStage.setTitle("Minesweeper");
-        Scene scene = new Scene(root, 900, 850);
+        Scene scene = new Scene(root, offset + 25, offset + 85);
         primaryStage.setScene(scene);
         scene.setFill(Paint.valueOf("WHITE"));
         createField(root);
@@ -105,7 +105,7 @@ public class GameController {
                 for (int y = 0; y < tiles; y++) {
                     if (field[x][y].isMined()) {
                         field[x][y].setFill(Paint.valueOf("RED"));
-                        root.getChildren().add(mine(field[x][y].rowPixel, field[x][y].columnPixel));
+                        root.getChildren().add(mine(field[x][y].rowPlacement, field[x][y].columnPlacement));
                     }
                 }
             field[row][column].setFill(Paint.valueOf("RED"));
@@ -113,9 +113,9 @@ public class GameController {
         } else {
             if ((field[row][column].mineCounter() > 0) && (field[row][column].closed())) {
                 field[row][column].openOne();
-                field[row][column].setFill(Paint.valueOf("GREY"));
-                root.getChildren().add(minesNearby(field[row][column].rowPixel + 8,
-                        field[row][column].columnPixel - 8, field[row][column].mineCounter()));
+                field[row][column].setFill(Paint.valueOf("SILVER"));
+                root.getChildren().add(minesNearby(field[row][column].rowPlacement + 8,
+                        field[row][column].columnPlacement - 8, field[row][column].mineCounter()));
             } else {
                 if (field[row][column].closed() && !field[row][column].isFlagged()
                         && field[row][column].mineCounter() == 0) {
@@ -147,8 +147,8 @@ public class GameController {
             field[row][column].unflag();
             if (field[row][column].isFlagged()) {
                 if (field[row][column].isMined()) tilesFlagged++;
-                flagField[row][column] = flag(field[row][column].rowPixel + 7,
-                        field[row][column].columnPixel - 5);
+                flagField[row][column] = flag(field[row][column].rowPlacement + 7,
+                        field[row][column].columnPlacement - 5);
                 root.getChildren().add(flagField[row][column]);
             } else {
                 if (field[row][column].isMined())
@@ -187,27 +187,27 @@ public class GameController {
                 (0 <= incrementColumn) && (incrementColumn < tiles));
     }//NOTE: CHECKS FOR POSSIBLE ABSENCE OF NEARBY TILES
 
-    private static Hexagon mine(double rowPixel, double columnPixel) {
+    private static Hexagon mine(double rowPlacement, double columnPlacement) {
         Hexagon hex = new Hexagon();
-        hex.setTranslateY(rowPixel);
-        hex.setTranslateX(columnPixel);
+        hex.setTranslateY(rowPlacement);
+        hex.setTranslateX(columnPlacement);
         hex.setFill(Paint.valueOf("RED"));
         return hex;
     }//NOTE: VISUALISATION OF THE MINE
 
-    private static Text flag(double rowPixel, double columnPixel) {
+    private static Text flag(double rowPlacement, double columnPlacement) {
         Text text = new Text();
-        text.setTranslateX(columnPixel - 5);
-        text.setTranslateY(rowPixel - 2);
+        text.setTranslateX(rowPlacement - 17);
+        text.setTranslateY(columnPlacement + 8);
         text.setText(".");
         text.setFont(Font.font("Colibri", 96));
         return text;
     }//NOTE: MARKS SELECTED TILE
 
-    private static Text minesNearby(double rowPixel, double columnPixel, int amount) {
+    private static Text minesNearby(double rowPlacement, double columnPlacement, int amount) {
         Text text = new Text();
-        text.setTranslateX(columnPixel + 2);
-        text.setTranslateY(rowPixel);
+        text.setTranslateX(rowPlacement - 12);
+        text.setTranslateY(columnPlacement + 16);
         text.setText(Integer.toString(amount));
         text.setFont(Font.font("Impact", 22));
         return text;
@@ -252,7 +252,7 @@ public class GameController {
     }
     private  static void setButton() {
         box.getChildren().add(newGameButton);
-        box.setLayoutX(450);
+        box.setLayoutX(tiles * tilesSize);
         box.setLayoutY(25);
         root.getChildren().add(box);
         button();
