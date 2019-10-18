@@ -13,8 +13,8 @@ public class Hexagon extends Polygon {
     public int minesNearby;
     public int rowCoordinate;
     public int columnCoordinate;
-    public double rowPixel;
-    public double columnPixel;
+    public double rowPlacement;
+    public double columnPlacement;
 
     public int mineCounter() {
         return minesNearby;
@@ -38,14 +38,14 @@ public class Hexagon extends Polygon {
     public Hexagon create(int row, int column, int radius, int gapBetween) {
         Hexagon hex = new Hexagon();
         for (int i = 0; i < 6; i++) {
-            hex.getPoints().add(radius * sin(i * PI / 3));
             hex.getPoints().add(radius * cos(i * PI / 3));
+            hex.getPoints().add(radius * sin(i * PI / 3));
         }
         double halfDiameter = sqrt(PI) * radius / 2;
-        hex.columnPixel = (column * 2 - row % 2) * halfDiameter + column * gapBetween + 75;
-        hex.rowPixel = row * (gapBetween + radius * 1.5) + 100;
-        hex.setTranslateX(hex.columnPixel);
-        hex.setTranslateY(hex.rowPixel);
+        hex.rowPlacement = row * (gapBetween + radius * 1.6) + 40;
+        hex.columnPlacement = (column * 2 - row % 2) * halfDiameter + column * gapBetween + 100;
+        hex.setTranslateX(hex.rowPlacement);
+        hex.setTranslateY(hex.columnPlacement);
         hex.setFill(Paint.valueOf("GREY"));
 
         hex.setOnMousePressed(event -> {
